@@ -3,250 +3,286 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>عداد رمضان - ذكريات وتسبيح</title>
+    <title>رمضان AI - العد التنازلي الذكي</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <style>
         :root {
-            --gold: #FFD700;
-            --green: #2ECC71;
-            --dark-blue: #1a365d;
+            --primary: #2c3e50;
+            --accent: #e67e22;
+            --gold: #f1c40f;
+            --dark: #2d3436;
         }
 
         * {
             box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: 'Cairo', sans-serif;
+            font-family: 'Tajawal', sans-serif;
         }
 
         body {
-            background: linear-gradient(45deg, #1a365d, #2c3e50);
+            background: linear-gradient(135deg, var(--primary), var(--dark));
             color: white;
             min-height: 100vh;
+            overflow-x: hidden;
         }
 
-        .header {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 1rem;
-            text-align: center;
-            border-bottom: 2px solid var(--gold);
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
-        .nav-menu {
+        .ai-navbar {
             display: flex;
             justify-content: center;
-            gap: 2rem;
-            margin: 1rem 0;
-        }
-
-        .nav-btn {
-            background: var(--green);
-            color: white;
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 25px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 1.1rem;
-            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.3);
-        }
-
-        .nav-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(46, 204, 113, 0.5);
-        }
-
-        .countdown-container {
-            max-width: 1000px;
-            margin: 2rem auto;
-            padding: 2rem;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            backdrop-filter: blur(10px);
-        }
-
-        .countdown-box {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
             gap: 1.5rem;
-            text-align: center;
+            padding: 1.5rem;
+            position: relative;
         }
 
-        .time-unit {
-            background: rgba(0, 0, 0, 0.4);
-            padding: 1.5rem;
-            border-radius: 15px;
-            border: 2px solid var(--gold);
+        .ai-nav-btn {
+            background: none;
+            border: 2px solid var(--accent);
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             position: relative;
             overflow: hidden;
+            font-size: 1.1rem;
         }
 
-        .time-unit::before {
+        .ai-nav-btn::before {
             content: '';
             position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255, 215, 0, 0.2), transparent);
-            transform: rotate(45deg);
-            animation: glow 3s infinite;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(230, 126, 34, 0.3), transparent);
+            transition: 0.5s;
         }
 
-        @keyframes glow {
-            0% { left: -50%; }
-            100% { left: 150%; }
+        .ai-nav-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(230, 126, 34, 0.4);
+        }
+
+        .ai-nav-btn:hover::before {
+            left: 100%;
+        }
+
+        .countdown-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 2rem;
+            padding: 2rem;
+        }
+
+        .time-card {
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .time-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            height: 3px;
+            background: var(--accent);
+            transition: 0.3s ease;
+        }
+
+        .time-card:hover::after {
+            width: 100%;
         }
 
         .time-number {
-            font-size: 3rem;
-            font-weight: bold;
+            font-size: 3.5rem;
+            font-weight: 700;
             color: var(--gold);
-            text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-        }
-
-        .time-label {
-            font-size: 1.2rem;
-            color: #ddd;
-        }
-
-        .content-section {
-            display: none;
-            max-width: 800px;
-            margin: 2rem auto;
-            padding: 2rem;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 15px;
-            min-height: 300px;
-        }
-
-        .active-section {
-            display: block;
-            animation: fadeIn 0.5s ease;
-        }
-
-        .athkar-box {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 1.5rem;
+            text-shadow: 0 0 15px rgba(241, 196, 15, 0.4);
             margin: 1rem 0;
-            border-radius: 15px;
-            border-left: 5px solid var(--green);
-            position: relative;
-        }
-
-        .tasbeeh-btn {
-            background: var(--dark-blue);
-            color: white;
-            border: 2px solid var(--gold);
-            padding: 1rem 2rem;
-            border-radius: 50px;
-            font-size: 1.2rem;
-            cursor: pointer;
+            display: block;
             transition: all 0.3s ease;
         }
 
-        .tasbeeh-btn:hover {
-            background: var(--gold);
-            color: var(--dark-blue);
+        .flip-animation {
+            animation: flip 0.6s cubic-bezier(0.455, 0.03, 0.515, 0.955);
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
+        @keyframes flip {
+            0% { transform: rotateX(0deg); }
+            50% { transform: rotateX(90deg); }
+            100% { transform: rotateX(0deg); }
         }
 
-        @media (max-width: 768px) {
-            .countdown-box {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .time-number {
-                font-size: 2rem;
-            }
+        .ai-loading {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 1.5rem;
+            color: var(--accent);
+        }
+
+        .dynamic-background {
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background: radial-gradient(circle, rgba(44,62,80,0.2) 0%, rgba(45,52,54,0.8) 100%);
         }
     </style>
 </head>
 <body>
-    <header class="header">
-        <h1>⏳ عد تنازلي لرمضان المبارك 🌙</h1>
-        <nav class="nav-menu">
-            <button class="nav-btn" onclick="showSection('countdown')">العد التنازلي</button>
-            <button class="nav-btn" onclick="showSection('athkar')">الأذكار</button>
-            <button class="nav-btn" onclick="showSection('tasbeeh')">التسبيح</button>
-        </nav>
-    </header>
+    <div class="dynamic-background"></div>
+    
+    <nav class="ai-navbar glass-panel">
+        <button class="ai-nav-btn" onclick="showSection('countdown')">
+            <i class="fas fa-clock"></i> العد التنازلي
+        </button>
+        <button class="ai-nav-btn" onclick="showSection('athkar')">
+            <i class="fas fa-pray"></i> الأذكار
+        </button>
+        <button class="ai-nav-btn" onclick="showSection('dua')">
+            <i class="fas fa-hands-praying"></i> الأدعية
+        </button>
+        <button class="ai-nav-btn" onclick="showSection('stats')">
+            <i class="fas fa-chart-line"></i> الإحصائيات
+        </button>
+    </nav>
 
-    <!-- قسم العد التنازلي -->
     <div id="countdown" class="content-section active-section">
-        <div class="countdown-container">
-            <div class="countdown-box">
-                <div class="time-unit">
-                    <div class="time-number" id="days">00</div>
-                    <div class="time-label">أيام</div>
-                </div>
-                <div class="time-unit">
-                    <div class="time-number" id="hours">00</div>
-                    <div class="time-label">ساعات</div>
-                </div>
-                <div class="time-unit">
-                    <div class="time-number" id="minutes">00</div>
-                    <div class="time-label">دقائق</div>
-                </div>
-                <div class="time-unit">
-                    <div class="time-number" id="seconds">00</div>
-                    <div class="time-label">ثواني</div>
-                </div>
+        <div class="glass-panel countdown-grid">
+            <div class="time-card">
+                <span class="time-number" id="ai-days">--</span>
+                <span class="time-label">أيام</span>
+            </div>
+            <div class="time-card">
+                <span class="time-number" id="ai-hours">--</span>
+                <span class="time-label">ساعات</span>
+            </div>
+            <div class="time-card">
+                <span class="time-number" id="ai-minutes">--</span>
+                <span class="time-label">دقائق</span>
+            </div>
+            <div class="time-card">
+                <span class="time-number" id="ai-seconds">--</span>
+                <span class="time-label">ثواني</span>
             </div>
         </div>
     </div>
 
-    <!-- قسم الأذكار -->
-    <div id="athkar" class="content-section">
-        <div class="athkar-box">
-            <h2>أذكار الصباح</h2>
-            <p id="current-thikr">أعوذ بالله من الشيطان الرجيم</p>
-            <button class="tasbeeh-btn" onclick="generateNewThikr()">ذكر جديد</button>
-        </div>
-    </div>
-
-    <!-- قسم التسبيح -->
-    <div id="tasbeeh" class="content-section">
-        <div class="athkar-box">
-            <h2>عداد التسبيح</h2>
-            <div style="text-align: center; font-size: 3rem;" id="counter">0</div>
-            <button class="tasbeeh-btn" onclick="incrementCounter()">اضغط للتسبيح</button>
-            <button class="tasbeeh-btn" style="margin-top: 1rem;" onclick="resetCounter()">إعادة التعيين</button>
-        </div>
+    <div class="ai-loading" id="loading">
+        <i class="fas fa-brain fa-spin"></i> جارٍ تحميل البيانات...
     </div>
 
     <script>
-        // عد تنازلي لرمضان (يجب تحديث التاريخ كل سنة)
-        const ramadanDate = new Date('March 10, 2024 00:00:00').getTime();
+        // محاكاة نظام الذكاء الاصطنائي (استبدل بAPI حقيقي)
+        async function fetchRamadanDate() {
+            document.getElementById('loading').style.display = 'block';
+            
+            // محاكاة اتصال بالخادم
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            // في الواقع سيتم استدعاء API مثل:
+            // const response = await fetch('https://api.aladhan.com/v1/gToH');
+            // const data = await response.json();
+            
+            return {
+                date: '2024-03-11',
+                source: 'الراصد الفلكي السعودي'
+            };
+        }
 
-        function updateCountdown() {
-            const now = new Date().getTime();
-            const diff = ramadanDate - now;
+        // نظام العد التنازلي الذكي
+        class SmartCountdown {
+            constructor() {
+                this.updateInterval = null;
+                this.ramadanDate = null;
+            }
 
-            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+            async init() {
+                try {
+                    const { date, source } = await fetchRamadanDate();
+                    this.ramadanDate = new Date(date);
+                    this.startCountdown();
+                    console.log(`تم الحصول على تاريخ رمضان من: ${source}`);
+                } catch (error) {
+                    console.error('خطأ في جلب البيانات:', error);
+                    this.showError();
+                } finally {
+                    document.getElementById('loading').style.display = 'none';
+                }
+            }
 
-            document.getElementById('days').innerHTML = days;
-            document.getElementById('hours').innerHTML = hours;
-            document.getElementById('minutes').innerHTML = minutes;
-            document.getElementById('seconds').innerHTML = seconds;
+            startCountdown() {
+                this.updateInterval = setInterval(() => this.update(), 1000);
+            }
 
-            // إضافة تأثيرات عند التغيير
-            if(seconds % 5 === 0) {
-                document.querySelectorAll('.time-unit').forEach(unit => {
-                    unit.style.transform = 'scale(1.05)';
-                    setTimeout(() => unit.style.transform = 'scale(1)', 300);
-                });
+            update() {
+                const now = new Date();
+                const diff = this.ramadanDate - now;
+
+                if (diff <= 0) {
+                    clearInterval(this.updateInterval);
+                    return this.handleRamadanStart();
+                }
+
+                const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+                this.animateUpdate('ai-days', days);
+                this.animateUpdate('ai-hours', hours.toString().padStart(2, '0'));
+                this.animateUpdate('ai-minutes', minutes.toString().padStart(2, '0'));
+                this.animateUpdate('ai-seconds', seconds.toString().padStart(2, '0'));
+            }
+
+            animateUpdate(elementId, newValue) {
+                const element = document.getElementById(elementId);
+                if (element.textContent !== newValue.toString()) {
+                    element.classList.add('flip-animation');
+                    setTimeout(() => {
+                        element.textContent = newValue;
+                        element.classList.remove('flip-animation');
+                    }, 300);
+                }
+            }
+
+            handleRamadanStart() {
+                document.getElementById('countdown').innerHTML = `
+                    <div class="glass-panel" style="text-align: center; padding: 2rem;">
+                        <h2 style="color: var(--accent);">🌙 كل عام وأنتم بخير! رمضان كريم! 🕌</h2>
+                    </div>
+                `;
+            }
+
+            showError() {
+                document.getElementById('countdown').innerHTML = `
+                    <div class="glass-panel" style="text-align: center; padding: 2rem; color: #e74c3c;">
+                        <h3>⚠️ حدث خطأ في جلب البيانات</h3>
+                        <p>الرجاء المحاولة لاحقاً أو التحقق من اتصال الإنترنت</p>
+                    </div>
+                `;
             }
         }
 
-        setInterval(updateCountdown, 1000);
+        // بدء النظام
+        const ramadanCountdown = new SmartCountdown();
+        ramadanCountdown.init();
 
         // إدارة الأقسام
         function showSection(sectionId) {
@@ -255,35 +291,6 @@
             });
             document.getElementById(sectionId).classList.add('active-section');
         }
-
-        // الأذكار
-        const athkarList = [
-            "سبحان الله وبحمده",
-            "لا إله إلا الله وحده لا شريك له",
-            "أستغفر الله العظيم",
-            "اللهم صل على محمد",
-            "حسبي الله ونعم الوكيل"
-        ];
-
-        function generateNewThikr() {
-            const randomIndex = Math.floor(Math.random() * athkarList.length);
-            document.getElementById('current-thikr').textContent = athkarList[randomIndex];
-        }
-
-        // عداد التسبيح
-        let counter = 0;
-        function incrementCounter() {
-            counter++;
-            document.getElementById('counter').textContent = counter;
-            document.getElementById('counter').style.animation = 'none';
-            void document.getElementById('counter').offsetWidth;
-            document.getElementById('counter').style.animation = 'fadeIn 0.5s ease';
-        }
-
-        function resetCounter() {
-            counter = 0;
-            document.getElementById('counter').textContent = counter;
-        }
     </script>
 </body>
-    </html>
+</html>
