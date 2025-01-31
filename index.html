@@ -35,6 +35,17 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
             margin: 1rem;
             padding: 2rem;
+            display: none; /* إخفاء جميع الأقسام بشكل افتراضي */
+        }
+
+        .active-section {
+            display: block; /* إظهار القسم النشط فقط */
+            animation: fadeIn 0.5s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .ai-navbar {
@@ -58,20 +69,8 @@
             font-size: 1.1rem;
         }
 
-        .ai-nav-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(230, 126, 34, 0.3), transparent);
-            transition: 0.5s;
-        }
-
-        .ai-nav-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 5px 15px rgba(230, 126, 34, 0.4);
+        .ai-nav-btn.active {
+            background: var(--accent);
         }
 
         .countdown-grid {
@@ -79,13 +78,6 @@
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
             gap: 2rem;
             padding: 2rem;
-        }
-
-        .time-card {
-            padding: 2rem;
-            text-align: center;
-            position: relative;
-            transition: transform 0.3s ease;
         }
 
         .time-number {
@@ -101,73 +93,87 @@
             animation: flip 0.6s cubic-bezier(0.455, 0.03, 0.515, 0.955);
         }
 
-        @keyframes flip {
-            0% { transform: rotateX(0deg); }
-            50% { transform: rotateX(90deg); }
-            100% { transform: rotateX(0deg); }
+        /* أنماط الأذكار */
+        .athkar-container {
+            max-height: 60vh;
+            overflow-y: auto;
+            padding: 1rem;
         }
 
-        /* أنماط الأقسام الجديدة */
-        .thikr-box {
-            text-align: center;
-            margin: 2rem 0;
-        }
-
-        .thikr-text {
-            font-size: 1.5rem;
+        .thikr-item {
+            background: rgba(255,255,255,0.1);
+            padding: 1.5rem;
             margin: 1rem 0;
-            min-height: 100px;
+            border-radius: 15px;
+            border-left: 5px solid var(--accent);
+        }
+
+        /* أنماط التسبيح */
+        .tasbeeh-circle {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            background: var(--dark);
+            margin: 2rem auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.3s ease;
+        }
+
+        .tasbeeh-circle:active {
+            transform: scale(0.95);
         }
 
         .tasbeeh-counter {
-            font-size: 4rem;
-            color: var(--accent);
-            margin: 2rem 0;
+            font-size: 3rem;
+            color: var(--gold);
         }
 
-        .stats-box {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            text-align: center;
+        .ripple {
+            position: absolute;
+            border: 2px solid var(--gold);
+            border-radius: 50%;
+            animation: rippleEffect 1s ease-out;
         }
 
-        .stat-item {
-            padding: 1rem;
-            background: rgba(255,255,255,0.1);
-            border-radius: 10px;
+        @keyframes rippleEffect {
+            from { transform: scale(0); opacity: 1; }
+            to { transform: scale(2); opacity: 0; }
         }
     </style>
 </head>
 <body>
-    <nav class="ai-navbar glass-panel">
-        <button class="ai-nav-btn" onclick="showSection('countdown')">
+    <nav class="ai-navbar">
+        <button class="ai-nav-btn active" onclick="showSection('countdown', this)">
             <i class="fas fa-clock"></i> العد التنازلي
         </button>
-        <button class="ai-nav-btn" onclick="showSection('athkar')">
+        <button class="ai-nav-btn" onclick="showSection('athkar', this)">
             <i class="fas fa-pray"></i> الأذكار
         </button>
-        <button class="ai-nav-btn" onclick="showSection('tasbeeh')">
+        <button class="ai-nav-btn" onclick="showSection('tasbeeh', this)">
             <i class="fas fa-hands-praying"></i> التسبيح
         </button>
-        <button class="ai-nav-btn" onclick="showSection('stats')">
+        <button class="ai-nav-btn" onclick="showSection('stats', this)">
             <i class="fas fa-chart-line"></i> الإحصائيات
         </button>
     </nav>
 
     <!-- قسم العد التنازلي -->
-    <div id="countdown" class="content-section active-section">
-        <div class="glass-panel countdown-grid">
+    <div id="countdown" class="glass-panel active-section">
+        <div class="countdown-grid">
             <div class="time-card">
-                <span class="time-number" id="days">27</span>
+                <span class="time-number" id="days">00</span>
                 <span class="time-label">أيام</span>
             </div>
             <div class="time-card">
-                <span class="time-number" id="hours">22</span>
+                <span class="time-number" id="hours">00</span>
                 <span class="time-label">ساعات</span>
             </div>
             <div class="time-card">
-                <span class="time-number" id="minutes">43</span>
+                <span class="time-number" id="minutes">00</span>
                 <span class="time-label">دقائق</span>
             </div>
             <div class="time-card">
@@ -178,123 +184,113 @@
     </div>
 
     <!-- قسم الأذكار -->
-    <div id="athkar" class="content-section glass-panel">
-        <div class="thikr-box">
-            <h2>أذكار الصباح</h2>
-            <p class="thikr-text" id="current-thikr">أعوذ بالله من الشيطان الرجيم</p>
-            <button class="ai-nav-btn" onclick="generateNewThikr()">ذكر جديد</button>
+    <div id="athkar" class="glass-panel">
+        <div class="athkar-container">
+            <div class="thikr-item">سبحان الله وبحمده سبحان الله العظيم</div>
+            <div class="thikr-item">لا إله إلا الله وحده لا شريك له، له الملك وله الحمد وهو على كل شيء قدير</div>
+            <div class="thikr-item">أستغفر الله العظيم الذي لا إله إلا هو الحي القيوم وأتوب إليه</div>
+            <div class="thikr-item">اللهم صل وسلم على نبينا محمد</div>
+            <div class="thikr-item">حسبي الله ونعم الوكيل</div>
+            <div class="thikr-item">لا حول ولا قوة إلا بالله العلي العظيم</div>
         </div>
     </div>
 
     <!-- قسم التسبيح -->
-    <div id="tasbeeh" class="content-section glass-panel">
-        <div class="thikr-box">
-            <h2>عداد التسبيح</h2>
-            <div class="tasbeeh-counter" id="counter">0</div>
-            <p id="tasbeeh-message">سبحان الله</p>
-            <button class="ai-nav-btn" onclick="incrementCounter()">+1 تسبيحة</button>
+    <div id="tasbeeh" class="glass-panel">
+        <div style="text-align: center;">
+            <div class="tasbeeh-circle" onclick="incrementCounter()">
+                <span class="tasbeeh-counter" id="counter">0</span>
+            </div>
             <button class="ai-nav-btn" onclick="resetCounter()">إعادة التعيين</button>
+            <div style="margin-top: 1rem;">
+                <label>
+                    <input type="checkbox" id="soundToggle"> تفعيل الصوت
+                </label>
+            </div>
         </div>
     </div>
 
     <!-- قسم الإحصائيات -->
-    <div id="stats" class="content-section glass-panel">
-        <div class="stats-box">
-            <div class="stat-item">
-                <h3>عدد الزوار</h3>
-                <p id="visitorCount">0</p>
-            </div>
-            <div class="stat-item">
-                <h3>تاريخ الإنشاء</h3>
-                <p>2024-03-01</p>
-            </div>
-            <div class="stat-item">
-                <h3>عدد التسبيحات</h3>
-                <p id="totalTasbeeh">0</p>
-            </div>
+    <div id="stats" class="glass-panel">
+        <div style="text-align: center;">
+            <h2>الإحصائيات</h2>
+            <p>عدد الزوار: <span id="visitorCount">0</span></p>
+            <p>إجمالي التسبيحات: <span id="totalTasbeeh">0</span></p>
         </div>
     </div>
 
+    <audio id="tasbeehSound" src="data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU..."></audio>
+
     <script>
-        // العد التنازلي
-        let days = 27;
-        let hours = 22;
-        let minutes = 43;
-        let seconds = 0;
+        // إعدادات العد التنازلي مع localStorage
+        let countdownData = JSON.parse(localStorage.getItem('countdown')) || {
+            days: 27,
+            hours: 22,
+            minutes: 43,
+            seconds: 0
+        };
+
+        // التسبيح
+        let counter = 0;
+        let totalTasbeeh = localStorage.getItem('totalTasbeeh') || 0;
+        const tasbeehSound = document.getElementById('tasbeehSound');
+
+        // إحصائيات الزوار
+        let visitorCount = localStorage.getItem('visitorCount') || 0;
+        visitorCount++;
+        localStorage.setItem('visitorCount', visitorCount);
+        document.getElementById('visitorCount').textContent = visitorCount;
 
         function startCountdown() {
             setInterval(() => {
-                seconds--;
+                countdownData.seconds--;
                 
-                if (seconds < 0) {
-                    seconds = 59;
-                    minutes--;
+                if (countdownData.seconds < 0) {
+                    countdownData.seconds = 59;
+                    countdownData.minutes--;
                     
-                    if (minutes < 0) {
-                        minutes = 59;
-                        hours--;
+                    if (countdownData.minutes < 0) {
+                        countdownData.minutes = 59;
+                        countdownData.hours--;
                         
-                        if (hours < 0) {
-                            hours = 23;
-                            days--;
+                        if (countdownData.hours < 0) {
+                            countdownData.hours = 23;
+                            countdownData.days--;
                         }
                     }
                 }
 
+                localStorage.setItem('countdown', JSON.stringify(countdownData));
                 updateDisplay();
             }, 1000);
         }
 
         function updateDisplay() {
-            animateUpdate('days', days.toString().padStart(2, '0'));
-            animateUpdate('hours', hours.toString().padStart(2, '0'));
-            animateUpdate('minutes', minutes.toString().padStart(2, '0'));
-            animateUpdate('seconds', seconds.toString().padStart(2, '0'));
+            document.getElementById('days').textContent = countdownData.days.toString().padStart(2, '0');
+            document.getElementById('hours').textContent = countdownData.hours.toString().padStart(2, '0');
+            document.getElementById('minutes').textContent = countdownData.minutes.toString().padStart(2, '0');
+            document.getElementById('seconds').textContent = countdownData.seconds.toString().padStart(2, '0');
         }
-
-        function animateUpdate(elementId, newValue) {
-            const element = document.getElementById(elementId);
-            if (element.textContent !== newValue) {
-                element.classList.add('flip-animation');
-                setTimeout(() => {
-                    element.textContent = newValue;
-                    element.classList.remove('flip-animation');
-                }, 300);
-            }
-        }
-
-        // الأذكار
-        const athkarList = [
-            "سبحان الله وبحمده",
-            "لا إله إلا الله وحده لا شريك له",
-            "أستغفر الله العظيم",
-            "اللهم صل على محمد",
-            "حسبي الله ونعم الوكيل",
-            "لا حول ولا قوة إلا بالله"
-        ];
-
-        function generateNewThikr() {
-            const randomIndex = Math.floor(Math.random() * athkarList.length);
-            document.getElementById('current-thikr').textContent = athkarList[randomIndex];
-        }
-
-        // التسبيح
-        let counter = 0;
-        let totalTasbeeh = localStorage.getItem('totalTasbeeh') || 0;
-        const tasbeehMessages = [
-            "سبحان الله", 
-            "الحمد لله", 
-            "الله أكبر",
-            "لا إله إلا الله"
-        ];
 
         function incrementCounter() {
             counter++;
             totalTasbeeh++;
             localStorage.setItem('totalTasbeeh', totalTasbeeh);
             document.getElementById('counter').textContent = counter;
-            document.getElementById('tasbeeh-message').textContent = tasbeehMessages[counter % 4];
             document.getElementById('totalTasbeeh').textContent = totalTasbeeh;
+            
+            // إضافة تأثير التموجات
+            const circle = document.querySelector('.tasbeeh-circle');
+            const ripple = document.createElement('div');
+            ripple.className = 'ripple';
+            circle.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 1000);
+
+            // تشغيل الصوت إذا كان مفعلاً
+            if(document.getElementById('soundToggle').checked) {
+                tasbeehSound.currentTime = 0;
+                tasbeehSound.play();
+            }
         }
 
         function resetCounter() {
@@ -302,21 +298,24 @@
             document.getElementById('counter').textContent = counter;
         }
 
-        // الإحصائيات
-        let visitorCount = localStorage.getItem('visitorCount') || 0;
-        visitorCount++;
-        localStorage.setItem('visitorCount', visitorCount);
-        document.getElementById('visitorCount').textContent = visitorCount;
-
-        // إدارة الأقسام
-        function showSection(sectionId) {
-            document.querySelectorAll('.content-section').forEach(section => {
-                section.classList.remove('active-section');
+        function showSection(sectionId, btn) {
+            // إخفاء جميع الأقسام
+            document.querySelectorAll('.glass-panel').forEach(panel => {
+                panel.classList.remove('active-section');
             });
+
+            // إزالة النشاط من جميع الأزرار
+            document.querySelectorAll('.ai-nav-btn').forEach(button => {
+                button.classList.remove('active');
+            });
+
+            // إظهار القسم المحدد وتفعيل الزر
             document.getElementById(sectionId).classList.add('active-section');
+            btn.classList.add('active');
         }
 
         // بدء العد التنازلي
+        updateDisplay();
         startCountdown();
     </script>
 </body>
