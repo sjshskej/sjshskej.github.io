@@ -1,9 +1,223 @@
 <!DOCTYPE html>
-<html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>موقع إعلانات - نموذج</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            line-height: 1.6;
+        }
+
+        /* الهيدر */
+        .header {
+            background: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 1rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #333;
+            font-weight: 500;
+        }
+
+        /* القسم الرئيسي */
+        .hero {
+            background: #f8f9fa;
+            padding: 120px 20px 60px;
+            text-align: center;
+        }
+
+        .search-bar {
+            max-width: 600px;
+            margin: 2rem auto;
+            display: flex;
+            gap: 10px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .search-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        /* قسم الفئات */
+        .categories {
+            padding: 4rem 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .category-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        /* القائمة المميزة */
+        .featured-listings {
+            padding: 4rem 20px;
+            background: #f8f9fa;
+        }
+
+        .listings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .listing-card {
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .listing-image {
+            height: 200px;
+            background: #ddd;
+            overflow: hidden;
+        }
+
+        .listing-info {
+            padding: 1rem;
+        }
+
+        /* الفوتر */
+        .footer {
+            background: #333;
+            color: white;
+            padding: 4rem 20px;
+            margin-top: 4rem;
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
 <body>
-  <video width="100%" controls>
-    <source src="https://drive.google.com/uc?export=download&id=176HhzoOUrdleb2ctIyi1GWqn76_NoZbf" type="video/mp4">
-    Your browser does not support the video tag.
-  </video>
+    <header class="header">
+        <nav class="nav-container">
+            <div class="logo">شعار الموقع</div>
+            <div class="nav-links">
+                <a href="#home">الرئيسية</a>
+                <a href="#categories">الفئات</a>
+                <a href="#listings">الإعلانات</a>
+                <a href="#contact">اتصل بنا</a>
+            </div>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <h1>ابحث عن ما تريد</h1>
+        <div class="search-bar">
+            <input type="text" class="search-input" placeholder="ابحث هنا...">
+            <button class="search-btn">بحث</button>
+        </div>
+    </section>
+
+    <section class="categories">
+        <h2>الفئات الشائعة</h2>
+        <div class="categories-grid">
+            <div class="category-card">
+                <i class="fas fa-car fa-2x"></i>
+                <h3>سيارات</h3>
+            </div>
+            <div class="category-card">
+                <i class="fas fa-home fa-2x"></i>
+                <h3>عقارات</h3>
+            </div>
+            <!-- إضافة المزيد من الفئات -->
+        </div>
+    </section>
+
+    <section class="featured-listings">
+        <h2>إعلانات مميزة</h2>
+        <div class="listings-grid">
+            <div class="listing-card">
+                <div class="listing-image"></div>
+                <div class="listing-info">
+                    <h3>عنوان الإعلان</h3>
+                    <p>وصف قصير للإعلان</p>
+                    <p class="price">السعر: 000 ريال</p>
+                </div>
+            </div>
+            <!-- إضافة المزيد من الإعلانات -->
+        </div>
+    </section>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <p>جميع الحقوق محفوظة &copy; 2023</p>
+        </div>
+    </footer>
+
+    <script>
+        // إضافة تفاعلية بسيطة
+        window.addEventListener('scroll', function() {
+            const header = document.querySelector('.header');
+            if (window.scrollY > 100) {
+                header.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+            } else {
+                header.style.boxShadow = '0 2px 5px rgba(0,0,0,0.1)';
+            }
+        });
+    </script>
 </body>
 </html>
