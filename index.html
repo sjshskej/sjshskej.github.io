@@ -2,305 +2,220 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Roblox Store - متجر روبلوكس</title>
+    <title>منصة الحظ اليومي</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <style>
         :root {
-            --main-color: #ff6b6b;
-            --secondary-color: #4ecdc4;
-            --dark-bg: #2d3436;
-            --neon-effect: 0 0 15px rgba(78, 205, 196, 0.7);
-        }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+            --gold: #FFD700;
+            --purple: #6A1B9A;
         }
 
         body {
-            font-family: 'Tajawal', sans-serif;
-            background: linear-gradient(135deg, #2d3436 0%, #000000 100%);
+            font-family: 'Cairo', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
             color: white;
-            overflow-x: hidden;
+            min-height: 100vh;
         }
 
-        /* تأثير الجسيمات في الخلفية */
-        #particles-js {
-            position: fixed;
+        .neon-box {
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid var(--gold);
+            border-radius: 15px;
+            box-shadow: 0 0 20px var(--gold);
+            padding: 20px;
+            margin: 20px;
+            backdrop-filter: blur(10px);
+        }
+
+        .gold-btn {
+            background: linear-gradient(45deg, #FFD700, #FFA500);
+            border: none;
+            padding: 12px 25px;
+            border-radius: 30px;
+            font-weight: bold;
+            transition: all 0.3s;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.4);
+        }
+
+        .gold-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(255, 215, 0, 0.6);
+        }
+
+        /* تصميم العجلة */
+        .wheel-container {
+            position: relative;
+            width: 300px;
+            height: 300px;
+            margin: auto;
+        }
+
+        .wheel {
             width: 100%;
             height: 100%;
-            z-index: -1;
-        }
-
-        /* الهيدر المعدل */
-        .header {
-            background: rgba(45, 52, 54, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 1rem;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-            border-bottom: 2px solid var(--main-color);
-        }
-
-        .nav-container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-
-        .logo {
-            font-size: 2rem;
-            background: linear-gradient(45deg, var(--main-color), var(--secondary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            font-weight: bold;
-            text-shadow: var(--neon-effect);
-        }
-
-        /* أيقونات التنقل */
-        .nav-icons {
-            display: flex;
-            gap: 1.5rem;
-        }
-
-        .nav-icon {
-            font-size: 1.5rem;
-            color: white;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-        }
-
-        .nav-icon:hover {
-            color: var(--main-color);
-            transform: scale(1.2);
-        }
-
-        .nav-icon::after {
-            content: attr(data-count);
-            position: absolute;
-            top: -10px;
-            right: -10px;
-            background: var(--secondary-color);
-            color: white;
-            width: 20px;
-            height: 20px;
             border-radius: 50%;
-            font-size: 0.8rem;
+            border: 4px solid var(--gold);
+            position: relative;
+            overflow: hidden;
+            transition: transform 3s cubic-bezier(0.25, 0.1, 0.25, 1);
+        }
+
+        .wheel-segment {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            clip-path: polygon(50% 50%, 100% 0, 100% 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-        }
-
-        /* قسم المنتجات */
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            padding: 2rem;
-            margin-top: 100px;
-        }
-
-        .product-card {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 15px;
-            padding: 1.5rem;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: all 0.3s ease;
-            cursor: pointer;
-        }
-
-        .product-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-        }
-
-        .product-image {
-            width: 100%;
-            height: 200px;
-            border-radius: 10px;
-            object-fit: cover;
-            margin-bottom: 1rem;
-            border: 2px solid var(--secondary-color);
-        }
-
-        /* زر الشراء */
-        .buy-btn {
-            background: linear-gradient(45deg, var(--main-color), var(--secondary-color));
-            border: none;
-            padding: 0.8rem 1.5rem;
-            border-radius: 25px;
-            color: white;
             font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            margin-top: auto;
+            transform-origin: 50% 50%;
         }
 
-        .buy-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 0 20px rgba(78, 205, 196, 0.5);
+        /* تصميم القوائم */
+        .leaderboard {
+            list-style: none;
+            padding: 0;
         }
 
-        /* تسجيل الدخول */
-        .auth-modal {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(45, 52, 54, 0.95);
-            padding: 2rem;
-            border-radius: 20px;
-            width: 400px;
-            max-width: 90%;
-            backdrop-filter: blur(15px);
-            display: none;
-        }
-
-        .auth-form input {
-            width: 100%;
-            padding: 1rem;
-            margin: 1rem 0;
+        .leaderboard li {
             background: rgba(255, 255, 255, 0.1);
-            border: none;
+            margin: 10px 0;
+            padding: 15px;
             border-radius: 10px;
-            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.3s;
         }
 
-        /* تأثيرات الحركة */
-        [data-aos] {
-            transition: all 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        .leaderboard li:hover {
+            transform: translateX(10px);
         }
 
-        /* الشريط الجانبي للسلة */
-        .cart-sidebar {
-            position: fixed;
-            right: -400px;
-            top: 0;
-            width: 400px;
-            height: 100vh;
-            background: rgba(45, 52, 54, 0.98);
-            padding: 2rem;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            backdrop-filter: blur(15px);
+        /* تأثيرات إضافية */
+        @keyframes glow {
+            0% { opacity: 0.6; }
+            50% { opacity: 1; }
+            100% { opacity: 0.6; }
         }
 
-        .cart-sidebar.active {
-            right: 0;
+        .glowing-text {
+            animation: glow 2s infinite;
+            color: var(--gold);
         }
     </style>
 </head>
 <body>
-    <div id="particles-js"></div>
-    
-    <header class="header">
-        <nav class="nav-container">
-            <div class="logo">ROBLOX STORE</div>
-            <div class="nav-icons">
-                <i class="fas fa-user nav-icon" onclick="toggleAuthModal()"></i>
-                <i class="fas fa-shopping-cart nav-icon" data-count="3" onclick="toggleCart()"></i>
-                <i class="fas fa-gamepad nav-icon"></i>
-            </div>
-        </nav>
+    <header class="neon-box">
+        <h1 class="glowing-text">🎰 منصة الحظ اليومي</h1>
+        <div id="userSection">
+            <input type="text" id="username" placeholder="اسم المستخدم">
+            <button onclick="updateUsername()" class="gold-btn">تحديث الاسم <i class="fas fa-sync-alt"></i></button>
+        </div>
     </header>
 
     <main>
-        <div class="products-grid">
-            <!-- منتج مثال -->
-            <div class="product-card" data-aos="zoom-in">
-                <img src="product1.jpg" alt="Product" class="product-image">
-                <h3>حزمة أسلاب نادرة</h3>
-                <p>وصف المنتج هنا...</p>
-                <div class="product-footer">
-                    <span class="price">1500 Robux</span>
-                    <button class="buy-btn">
-                        <i class="fas fa-shopping-cart"></i>
-                        شراء الآن
-                    </button>
+        <section class="neon-box">
+            <h2><i class="fas fa-gift"></i> هداية اليوم</h2>
+            <p id="dailyAdvice">"الفرص لا تأتي مرتين، استثمرها بحكمة"</p>
+            <button class="gold-btn" onclick="claimDaily()">استلام النقاط <i class="fas fa-coins"></i></button>
+            <p id="pointsDisplay">النقاط: 0</p>
+        </section>
+
+        <section class="neon-box">
+            <div class="wheel-container">
+                <div class="wheel" id="wheel">
+                    <!-- سيتم إضافة شرائح العجلة عبر الجافاسكريبت -->
                 </div>
             </div>
-            <!-- إضافة المزيد من المنتجات -->
-        </div>
+            <button class="gold-btn" onclick="spinWheel()">تدوير العجلة (50 نقطة) <i class="fas fa-redo"></i></button>
+        </section>
 
-        <!-- نموذج تسجيل الدخول -->
-        <div class="auth-modal" id="authModal">
-            <h2>تسجيل الدخول</h2>
-            <form class="auth-form">
-                <input type="email" placeholder="البريد الإلكتروني">
-                <input type="password" placeholder="كلمة المرور">
-                <button class="buy-btn">الدخول</button>
-            </form>
-        </div>
-
-        <!-- سلة التسوق -->
-        <div class="cart-sidebar">
-            <h2>سلة التسوق</h2>
-            <!-- محتويات السلة -->
-        </div>
+        <section class="neon-box">
+            <h2><i class="fas fa-trophy"></i> المراكز</h2>
+            <ul class="leaderboard" id="leaderboard">
+                <!-- سيتم ملؤها بالجافاسكريبت -->
+            </ul>
+        </section>
     </main>
 
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        // تهيئة تأثيرات الحركة
-        AOS.init();
+        let points = 0;
+        let username = "زائر";
+        const usedNames = new Set();
 
-        // تهيئة جسيمات الخلفية
-        particlesJS('particles-js', {
-            particles: {
-                number: { value: 80 },
-                color: { value: '#4ecdc4' },
-                shape: { type: 'circle' },
-                opacity: { value: 0.5 },
-                size: { value: 3 },
-                move: {
-                    enable: true,
-                    speed: 2,
-                    direction: 'none',
-                    random: false,
-                    straight: false,
-                    out_mode: 'out',
-                    bounce: false,
-                }
-            },
-            interactivity: {
-                detect_on: 'canvas',
-                events: {
-                    onhover: { enable: true, mode: 'repulse' },
-                    onclick: { enable: true, mode: 'push' },
-                    resize: true
-                }
+        // نظام النصائح اليومية
+        const dailyAdvices = [
+            "النجاح يبدأ بالقرار",
+            "التحديات تصنع العظماء",
+            "لا تؤجل عمل اليوم إلى الغد",
+            // أضف المزيد من النصائح
+        ];
+
+        function updateUsername() {
+            const newName = document.getElementById('username').value;
+            if (usedNames.has(newName)) {
+                alert("❌ هذا الاسم مستخدم مسبقًا!");
+                return;
             }
-        });
-
-        // وظائف JavaScript
-        function toggleAuthModal() {
-            const modal = document.getElementById('authModal');
-            modal.style.display = modal.style.display === 'block' ? 'none' : 'block';
+            username = newName;
+            usedNames.add(newName);
+            updateLeaderboard();
         }
 
-        function toggleCart() {
-            document.querySelector('.cart-sidebar').classList.toggle('active');
+        function claimDaily() {
+            points += 50;
+            updateDisplay();
+            showEffect('+50', 'gold');
         }
 
-        // إغلاق النوافذ عند النقر خارجها
-        window.onclick = function(event) {
-            const modal = document.getElementById('authModal');
-            if (event.target === modal) {
-                modal.style.display = 'none';
+        function spinWheel() {
+            if (points < 50) {
+                showMessage("⚠️ ليس لديك نقاط كافية!");
+                return;
             }
+            points -= 50;
+            const result = Math.floor(Math.random() * 100) + 1;
+            // إضافة تأثيرات العجلة
+            updateDisplay();
         }
+
+        function showMessage(text, color = 'red') {
+            // إضافة تأثيرات الرسائل
+        }
+
+        function updateDisplay() {
+            document.getElementById('pointsDisplay').textContent = `النقاط: ${points}`;
+        }
+
+        function updateLeaderboard() {
+            // تحديث قائمة المراكز
+        }
+
+        // تهيئة العجلة
+        function initWheel() {
+            const segments = [
+                {text: "100 نقطة", color: "#4CAF50"},
+                {text: "حظ أوفر", color: "#F44336"},
+                // أضف المزيد من الشرائح
+            ];
+
+            const wheel = document.getElementById('wheel');
+            segments.forEach((seg, i) => {
+                const rotation = (i * 360) / segments.length;
+                const segment = document.createElement('div');
+                segment.className = 'wheel-segment';
+                segment.style.transform = `rotate(${rotation}deg)`;
+                segment.style.backgroundColor = seg.color;
+                segment.textContent = seg.text;
+                wheel.appendChild(segment);
+            });
+        }
+
+        window.onload = initWheel;
     </script>
 </body>
 </html>
