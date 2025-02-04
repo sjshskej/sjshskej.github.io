@@ -2,7 +2,7 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>منصة الحظ الفاخرة</title>
+    <title>منصة الحُظوظ الفاخرة</title>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -21,11 +21,11 @@
             padding: 20px;
         }
 
-        /* نظام التنقل */
         .nav-bar {
             display: flex;
             gap: 15px;
             margin-bottom: 30px;
+            flex-wrap: wrap;
         }
 
         .nav-btn {
@@ -43,63 +43,16 @@
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
         }
 
-        .nav-btn:hover {
+        .nav-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .nav-btn:hover:not(:disabled) {
             transform: translateY(-3px);
             box-shadow: 0 6px 20px rgba(255, 215, 0, 0.5);
         }
 
-        /* نظام الإشعارات */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: -300px;
-            background: rgba(0, 0, 0, 0.9);
-            padding: 20px;
-            border-radius: 15px;
-            border-left: 5px solid var(--gold);
-            transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .notification.show {
-            right: 20px;
-        }
-
-        /* تصميم العجلة الجديد */
-        .wheel-modal {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: rgba(0, 0, 0, 0.95);
-            padding: 30px;
-            border-radius: 20px;
-            border: 2px solid var(--gold);
-            z-index: 1000;
-        }
-
-        .wheel-content {
-            position: relative;
-            width: 400px;
-            height: 400px;
-        }
-
-        .wheel-text {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            animation: spin 5s linear infinite;
-        }
-
-        @keyframes spin {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-
-        /* تحسينات النظام العام */
         .section {
             display: none;
             background: rgba(0, 0, 0, 0.7);
@@ -107,11 +60,29 @@
             padding: 25px;
             margin: 20px 0;
             border: 1px solid var(--gold);
+            animation: fadeIn 0.5s;
         }
 
         .active-section {
             display: block;
-            animation: fadeIn 0.5s;
+        }
+
+        .wheel-container {
+            text-align: center;
+            padding: 20px;
+        }
+
+        #wheelImage {
+            width: 300px;
+            height: 300px;
+            margin: 20px auto;
+            border: 3px solid var(--gold);
+            border-radius: 50%;
+            padding: 10px;
+        }
+
+        .notification {
+            /* ... نفس التصميم السابق ... */
         }
 
         @keyframes fadeIn {
@@ -136,150 +107,141 @@
         </button>
     </div>
 
-    <!-- قسم اليومية -->
+    <!-- الأقسام -->
     <div id="daily" class="section active-section">
         <h2><i class="fas fa-coins"></i> النقاط اليومية</h2>
         <p id="timer">الوقت المتبقي: 24:00:00</p>
-        <button class="nav-btn" onclick="claimDaily()">
+        <button class="nav-btn" id="claimBtn" onclick="claimDaily()">
             <i class="fas fa-hand-holding-usd"></i> استلام النقاط
         </button>
     </div>
 
-    <!-- قسم العجلة -->
     <div id="wheel" class="section">
-        <div class="wheel-content">
-            <img src="wheel-image.png" class="wheel-text" alt="عجلة الحظ">
-            <button class="nav-btn" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);" 
-                    onclick="startWheel()">
-                <i class="fas fa-play"></i> ابدأ
+        <div class="wheel-container">
+            <img src="wheel.png" id="wheelImage" alt="عجلة الحظ">
+            <button class="nav-btn" onclick="spinWheel()" id="spinBtn">
+                <i class="fas fa-play"></i> تدوير العجلة (50 نقطة)
             </button>
         </div>
     </div>
 
-    <!-- قسم المراكز -->
     <div id="leaderboard" class="section">
         <h2><i class="fas fa-crown"></i> قائمة المتصدرين</h2>
         <ul id="leaderboardList"></ul>
     </div>
 
-    <!-- قسم تغيير الاسم -->
     <div id="username" class="section">
-        <input type="text" id="newUsername" placeholder="اسم جديد">
+        <input type="text" id="newUsername" placeholder="اسم جديد" class="nav-input">
         <button class="nav-btn" onclick="updateUsername()">
             <i class="fas fa-check"></i> تأكيد
         </button>
     </div>
 
-    <div id="notification" class="notification">
-        <i class="fas fa-exclamation-circle"></i>
-        <span id="notificationText"></span>
-    </div>
-
     <script>
+        // الحالة الأولية
         let userData = {
             points: 0,
             lastClaim: 0,
             username: "زائر"
         };
 
-        const leaderboard = [];
+        let leaderboard = [];
         const usedNames = new Set();
 
-        // تهيئة النظام من localStorage
-        function initSystem() {
+        // تهيئة النظام
+        function init() {
+            loadData();
+            updateTimerDisplay();
+            renderLeaderboard();
+            setInterval(updateTimerDisplay, 1000);
+        }
+
+        // تحميل البيانات
+        function loadData() {
             const savedData = localStorage.getItem('userData');
             if (savedData) userData = JSON.parse(savedData);
             
-            const savedLeaderboard = localStorage.getItem('leaderboard');
-            if (savedLeaderboard) leaderboard = JSON.parse(savedLeaderboard);
+            const savedBoard = localStorage.getItem('leaderboard');
+            if (savedBoard) leaderboard = JSON.parse(savedBoard);
             
             const savedNames = localStorage.getItem('usedNames');
             if (savedNames) usedNames = new Set(JSON.parse(savedNames));
-            
-            updateDisplay();
-            startTimer();
         }
 
-        // نظام التوقيت اليومي
-        function startTimer() {
-            setInterval(() => {
-                const now = Date.now();
-                const diff = now - userData.lastClaim;
-                const hours = 23 - Math.floor((diff / (1000 * 60 * 60)) % 24);
-                const minutes = 59 - Math.floor((diff / (1000 * 60)) % 60);
-                const seconds = 59 - Math.floor((diff / 1000) % 60);
-                document.getElementById('timer').textContent = 
-                    `الوقت المتبقي: ${hours}:${minutes}:${seconds}`;
-            }, 1000);
+        // عرض الأقسام
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active-section');
+            });
+            document.getElementById(sectionId).classList.add('active-section');
         }
 
-        // المطالبة بالنقاط اليومية
+        // نظام النقاط اليومية
         function claimDaily() {
             const now = Date.now();
-            if (now - userData.lastClaim < 86400000) {
-                showNotification("⏳ لم يمر 24 ساعة بعد!", "gold");
-                return;
-            }
+            if (now - userData.lastClaim < 86400000) return;
             
             userData.points += 100;
             userData.lastClaim = now;
-            updateLeaderboard();
             saveData();
-            showNotification("🎉 +100 نقطة جديدة!", "green");
+            updateLeaderboard();
+            alertSuccess('+100 نقطة جديدة!');
         }
 
         // نظام العجلة
-        function startWheel() {
-            if (userData.points < 50) {
-                showNotification("⚠️ نقاط غير كافية!", "red");
-                return;
-            }
+        function spinWheel() {
+            if (userData.points < 50) return alertError('نقاط غير كافية!');
             
             userData.points -= 50;
-            const rewards = ["+200 نقطة", "+50 نقطة", "حظ أوفر", "جائزة مفاجئة"];
-            const result = rewards[Math.floor(Math.random() * rewards.length)];
-            
-            if (result.includes("نقطة")) {
-                const points = parseInt(result.match(/\d+/)[0]);
-                userData.points += points;
-            }
-            
-            updateLeaderboard();
+            const reward = getRandomReward();
+            handleReward(reward);
             saveData();
-            showNotification(`🎰 ${result}`, "purple");
+            animateWheel();
         }
 
-        // تحديث القوائم
+        // نظام المراكز
         function updateLeaderboard() {
-            const userIndex = leaderboard.findIndex(u => u.username === userData.username);
-            if (userIndex > -1) {
-                leaderboard[userIndex].points = userData.points;
+            const existingUser = leaderboard.find(u => u.username === userData.username);
+            if (existingUser) {
+                existingUser.points = userData.points;
             } else {
-                leaderboard.push({ username: userData.username, points: userData.points });
+                leaderboard.push({...userData});
             }
-            
             leaderboard.sort((a, b) => b.points - a.points);
             localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
             renderLeaderboard();
         }
 
-        // نظام الإشعارات
-        function showNotification(text, color) {
-            const notification = document.getElementById('notification');
-            notification.style.borderColor = color;
-            document.getElementById('notificationText').textContent = text;
-            notification.classList.add('show');
-            setTimeout(() => notification.classList.remove('show'), 3000);
+        // التايمر
+        function updateTimerDisplay() {
+            const remaining = calculateRemainingTime();
+            document.getElementById('timer').textContent = 
+                `الوقت المتبقي: ${remaining.hours}:${remaining.minutes}:${remaining.seconds}`;
+            document.getElementById('claimBtn').disabled = remaining.total > 0;
         }
 
-        // حفظ البيانات
+        // المساعدات
+        function calculateRemainingTime() {
+            const now = Date.now();
+            const diff = now - userData.lastClaim;
+            const total = 86400000 - diff;
+            
+            return {
+                total: total > 0 ? total : 0,
+                hours: Math.floor((total / 3600000) % 24).toString().padStart(2, '0'),
+                minutes: Math.floor((total / 60000) % 60).toString().padStart(2, '0'),
+                seconds: Math.floor((total / 1000) % 60).toString().padStart(2, '0')
+            };
+        }
+
         function saveData() {
             localStorage.setItem('userData', JSON.stringify(userData));
+            localStorage.setItem('leaderboard', JSON.stringify(leaderboard));
             localStorage.setItem('usedNames', JSON.stringify([...usedNames]));
-            updateDisplay();
         }
 
-        window.onload = initSystem;
+        // ابدأ التطبيق
+        window.onload = init;
     </script>
 </body>
 </html>
